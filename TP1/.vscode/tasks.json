@@ -1,0 +1,32 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "CMake: Configure",  // Nom de la tâche
+            "type": "shell",
+            "command": "cmake",  // Commande pour exécuter CMake
+            "args": [
+                "-S", "${workspaceFolder}",  // Dossier source
+                "-B", "${workspaceFolder}/out/build"  // Dossier de sortie pour les fichiers de construction
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true  // Cette tâche sera utilisée comme tâche de construction par défaut
+            },
+            "problemMatcher": ["$gcc"]  // Modèle pour détecter les erreurs de compilation
+        },
+        {
+            "label": "CMake: Build",  // Nom de la tâche de construction
+            "type": "shell",
+            "command": "cmake",  // Commande pour exécuter CMake
+            "args": [
+                "--build", "${workspaceFolder}/out/build"  // Dossier de sortie pour la construction
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": false  // Pas une tâche de construction par défaut
+            },
+            "problemMatcher": ["$gcc"]  // Modèle pour détecter les erreurs de compilation
+        }
+    ]
+}
