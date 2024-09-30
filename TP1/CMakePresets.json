@@ -11,7 +11,7 @@
                 "CMAKE_C_COMPILER": "/usr/bin/gcc",
                 "CMAKE_CXX_COMPILER": "/usr/bin/g++",
                 "CMAKE_BUILD_TYPE": "Debug",
-                "CMAKE_PREFIX_PATH": "/matieres/5MMPCPD/pnl"
+                "CMAKE_PREFIX_PATH": "/home/mohameml/ENSIMAG/3A/MEQA/S9/04_methodes_Monte_Carlo/TPs/pnl/pnl/build/"
             }
         }
     ]
