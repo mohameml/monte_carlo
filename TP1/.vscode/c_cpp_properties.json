@@ -4,7 +4,7 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/home/mohameml/ENSIMAG/3A/MEQA/S9/04_methodes_Monte_Carlo/TPs/pnl/pnl/build/include/"
+                "/matieres/5MMPCPD/pnl/include/"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
