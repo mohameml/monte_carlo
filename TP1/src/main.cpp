@@ -7,10 +7,13 @@
 #include <fstream>
 
 void simulation_of_brownien(PnlVect *res, double T, int N, PnlRng *rng);
-void test(double a, double M, PnlRng *rng);
 double estimation_taux_a(double T, int N, PnlRng *rng, int M, double a);
 double calcul_taux_a_theorique(double a, double T);
-void test_biais(const std::string &file_name, int nbs, PnlRng *rng);
+void test_a_1(PnlRng *rng);
+void generata_file_biais(const std::string &file_name, int nbs, PnlRng *rng);
+void simulation_of_brownien_near_to_a(PnlVect *res, double T, int N, PnlRng *rng, double a, double epsilon, PnlVect *sim_b);
+double estimation_taux_a_refine(double T, int N, PnlRng *rng, int M, double a, double epsilon);
+void generata_file_biais_refine(const std::string &file_name, int nbs, PnlRng *rng);
 
 int main()
 {
@@ -20,9 +23,9 @@ int main()
     double a = 2.0;
     int M = 1000;
 
-    test(a, M, rng);
-
-    test_biais("tests/data.txt", 100, rng);
+    // test_a_1(rng);
+    // generata_file_biais("tests/data.txt", 100, rng);
+    generata_file_biais_refine("tests/data_refine.txt", 100, rng);
 
     pnl_rng_free(&rng);
     return 0;
@@ -46,14 +49,16 @@ double estimation_taux_a(double T, int N, PnlRng *rng, int M, double a)
 
     double setp = T / (double)N;
 
+    PnlVect *sim_brow = pnl_vect_create(N + 1);
+
     for (int i = 0; i < M; i++)
     {
-        PnlVect *sim_brow = pnl_vect_create(N + 1);
         simulation_of_brownien(sim_brow, T, N, rng);
 
         for (int j = 0; j < N + 1; j++)
         {
             double w_t = pnl_vect_get(sim_brow, j);
+            // fabs(w_t - a) <= pow(10, -2)
             if (w_t >= a || j == N)
             {
                 taux_a += j * setp;
@@ -64,6 +69,7 @@ double estimation_taux_a(double T, int N, PnlRng *rng, int M, double a)
 
     taux_a = taux_a * (1 / (double)M);
 
+    pnl_vect_free(&sim_brow);
     return taux_a;
 }
 
@@ -78,27 +84,6 @@ double calcul_taux_a_theorique(double a, double T)
     return res;
 }
 
-void test(double a, double M, PnlRng *rng)
-{
-
-    double biais = 0.0;
-
-    for (int i = 1; i < 6; i++)
-    {
-        double T = i;
-        double N = 20 * T;
-        double taux_a_estimation = estimation_taux_a(T, N, rng, M, a);
-        double taux_a_theorique = calcul_taux_a_theorique(a, T);
-
-        std::cout << "taux_a_estimation = " << taux_a_estimation << std::endl;
-        std::cout << "taux_a_theorique = " << taux_a_theorique << std::endl;
-        std::cout << "==============================================" << std::endl;
-
-        biais += taux_a_estimation - taux_a_theorique;
-    }
-    std::cout << "biais = " << biais / 5 << std::endl;
-}
-
 void test_a_1(PnlRng *rng)
 {
 
@@ -106,23 +91,28 @@ void test_a_1(PnlRng *rng)
     double T = 3.0;
     double M = 500000;
 
-    for (int i = 10; i < 1000; i += 20)
+    // double taux_a_estimation = estimation_taux_a(T, 1000, rng, M, a);
+    // double taux_a_theorique = calcul_taux_a_theorique(a, T);
+    // std::cout << "================ N = " << 1000 << " =======================" << std::endl;
+    // std::cout << "taux_a_estimation = " << taux_a_estimation << std::endl;
+    // std::cout << "taux_a_theorique = " << taux_a_theorique << std::endl;
+
+    for (int i = 10; i < 1000; i += 100)
     {
 
         double taux_a_estimation = estimation_taux_a(T, i, rng, M, a);
         double taux_a_theorique = calcul_taux_a_theorique(a, T);
-
+        std::cout << "================ N = " << i << " =======================" << std::endl;
         std::cout << "taux_a_estimation = " << taux_a_estimation << std::endl;
         std::cout << "taux_a_theorique = " << taux_a_theorique << std::endl;
-        std::cout << "==============================================" << std::endl;
     }
 }
 
-void test_biais(const std::string &file_name, int nbs, PnlRng *rng)
+void generata_file_biais(const std::string &file_name, int nbs, PnlRng *rng)
 {
-    double T = 3.0;
     double a = 1.0;
-    int M = 50000;
+    double T = 3.0;
+    int M = 500000;
 
     std::ofstream file(file_name.c_str());
 
@@ -131,13 +121,93 @@ void test_biais(const std::string &file_name, int nbs, PnlRng *rng)
         exit(1);
     }
 
+    double taux_a_theorique = calcul_taux_a_theorique(a, T);
+
     for (int i = 1; i < nbs; i++)
     {
-        int N = i;
-        double taux_a_estimation = estimation_taux_a(T, N, rng, M, a);
-        double taux_a_theorique = calcul_taux_a_theorique(a, T);
+        double taux_a_estimation = estimation_taux_a(T, i, rng, M, a);
 
-        file << std::log(N) << "," << std::log(taux_a_estimation) << "\n";
+        file << std::log(i) << "," << std::log(taux_a_estimation - taux_a_theorique) << "\n";
+    }
+
+    file.close();
+}
+
+void simulation_of_brownien_near_to_a(PnlVect *res, double T, int N, PnlRng *rng, double a, double epsilon, PnlVect *sim_b)
+{
+
+    for (int i = 0; i < sim_b->size; i++)
+    {
+        double w_s = pnl_vect_get(sim_b, i);
+        if (fabs(w_s - a) < epsilon)
+        {
+            pnl_vect_set(res, 0, w_s);
+            for (int j = 1; j <= N; j++)
+            {
+                double w_t_j = pnl_vect_get(res, j - 1) + std::sqrt(T / (double)N) * pnl_rng_normal(rng);
+                pnl_vect_set(res, j, w_t_j);
+            }
+
+            break;
+        }
+    }
+}
+
+double estimation_taux_a_refine(double T, int N, PnlRng *rng, int M, double a, double epsilon)
+{
+
+    double taux_a = 0.0;
+
+    double setp = T / (double)N;
+
+    PnlVect *sim_brow = pnl_vect_create(N + 1);
+    PnlVect *sim_brow_near_a = pnl_vect_create(N + 1);
+
+    for (int i = 0; i < M; i++)
+    {
+        simulation_of_brownien(sim_brow, T, N, rng);
+        simulation_of_brownien_near_to_a(sim_brow_near_a, T, N, rng, a, epsilon, sim_brow);
+
+        for (int j = 0; j < N + 1; j++)
+        {
+            double w_t = pnl_vect_get(sim_brow_near_a, j);
+            // fabs(w_t - a) <= pow(10, -2)
+            if (w_t >= a)
+            {
+                taux_a += std::min(j * setp, T);
+                break;
+            }
+        }
+    }
+
+    taux_a = taux_a * (1 / (double)M);
+
+    pnl_vect_free(&sim_brow);
+    pnl_vect_free(&sim_brow_near_a);
+    return taux_a;
+}
+
+void generata_file_biais_refine(const std::string &file_name, int nbs, PnlRng *rng)
+{
+    double a = 1.0;
+    double T = 3.0;
+    int M = 500000;
+    double epsilon = pow(10, -1);
+
+    std::ofstream file(file_name.c_str());
+
+    if (!file.is_open())
+    {
+        exit(1);
+    }
+
+    double taux_a_theorique = calcul_taux_a_theorique(a, T);
+
+    for (int i = 1; i < nbs; i++)
+    {
+        double taux_a_estimation = estimation_taux_a_refine(T, i, rng, M, a, epsilon);
+
+        file << std::log(i) << "," << std::log(fabs(taux_a_estimation - taux_a_theorique)) << "\n";
     }
 
     file.close();
