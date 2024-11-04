@@ -1,0 +1,43 @@
+file(REMOVE_RECURSE
+  "CMakeFiles/hedge-tojson.dir/3rdparty/jlparser/json_helper.cpp.o"
+  "CMakeFiles/hedge-tojson.dir/3rdparty/jlparser/json_helper.cpp.o.d"
+  "CMakeFiles/hedge-tojson.dir/3rdparty/jlparser/parser.cpp.o"
+  "CMakeFiles/hedge-tojson.dir/3rdparty/jlparser/parser.cpp.o.d"
+  "CMakeFiles/hedge-tojson.dir/AsianOption.cpp.o"
+  "CMakeFiles/hedge-tojson.dir/AsianOption.cpp.o.d"
+  "CMakeFiles/hedge-tojson.dir/BarrierOption.cpp.o"
+  "CMakeFiles/hedge-tojson.dir/BarrierOption.cpp.o.d"
+  "CMakeFiles/hedge-tojson.dir/BasketOption.cpp.o"
+  "CMakeFiles/hedge-tojson.dir/BasketOption.cpp.o.d"
+  "CMakeFiles/hedge-tojson.dir/BlackScholesModel.cpp.o"
+  "CMakeFiles/hedge-tojson.dir/BlackScholesModel.cpp.o.d"
+  "CMakeFiles/hedge-tojson.dir/HedgingResults.cpp.o"
+  "CMakeFiles/hedge-tojson.dir/HedgingResults.cpp.o.d"
+  "CMakeFiles/hedge-tojson.dir/MaxOption.cpp.o"
+  "CMakeFiles/hedge-tojson.dir/MaxOption.cpp.o.d"
+  "CMakeFiles/hedge-tojson.dir/Model.cpp.o"
+  "CMakeFiles/hedge-tojson.dir/Model.cpp.o.d"
+  "CMakeFiles/hedge-tojson.dir/MonteCarlo.cpp.o"
+  "CMakeFiles/hedge-tojson.dir/MonteCarlo.cpp.o.d"
+  "CMakeFiles/hedge-tojson.dir/MountainOption.cpp.o"
+  "CMakeFiles/hedge-tojson.dir/MountainOption.cpp.o.d"
+  "CMakeFiles/hedge-tojson.dir/Option.cpp.o"
+  "CMakeFiles/hedge-tojson.dir/Option.cpp.o.d"
+  "CMakeFiles/hedge-tojson.dir/PnlVectToJson.cpp.o"
+  "CMakeFiles/hedge-tojson.dir/PnlVectToJson.cpp.o.d"
+  "CMakeFiles/hedge-tojson.dir/PricingResults.cpp.o"
+  "CMakeFiles/hedge-tojson.dir/PricingResults.cpp.o.d"
+  "CMakeFiles/hedge-tojson.dir/TestModel.cpp.o"
+  "CMakeFiles/hedge-tojson.dir/TestModel.cpp.o.d"
+  "CMakeFiles/hedge-tojson.dir/TestOption.cpp.o"
+  "CMakeFiles/hedge-tojson.dir/TestOption.cpp.o.d"
+  "CMakeFiles/hedge-tojson.dir/hedge-tojson.cpp.o"
+  "CMakeFiles/hedge-tojson.dir/hedge-tojson.cpp.o.d"
+  "hedge-tojson"
+  "hedge-tojson.pdb"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang CXX)
+  include(CMakeFiles/hedge-tojson.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()
