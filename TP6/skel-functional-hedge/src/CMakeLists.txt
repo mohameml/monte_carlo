@@ -33,6 +33,7 @@ endif ()
 #ENDIF()
 
 include_directories(${PROJECT_SOURCE_DIR})
+include_directories(/usr/include/x86_64-linux-gnu/mpich/)
 
 # Detect PNL
 find_package(Pnl REQUIRED)

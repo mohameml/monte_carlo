@@ -1,0 +1,30 @@
+{
+    "model type": "bs",
+    "model size": 1,
+    "strike": 100.0,
+    "spot": [
+        100.0
+    ],
+    "maturity": 1.0,
+    "volatility": [
+        0.2
+    ],
+    "interest rate": 0.05,
+    "correlation": 0.1,
+    "dividend rate": [
+        0.0
+    ],
+    "option type": "basket",
+    "payoff coefficients": [
+        1.0
+    ],
+    "timestep number": 1,
+    "sample number": 1000000,
+    "trend": [
+        0.05
+    ],
+    "hedging dates number": 13,
+    "number of intervals for local martingale": 20,
+    "polynomial order": 4,
+    "martingale type": "local_asset"
+}

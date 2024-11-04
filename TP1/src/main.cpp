@@ -23,9 +23,9 @@ int main()
     double a = 2.0;
     int M = 1000;
 
-    // test_a_1(rng);
+    test_a_1(rng);
     // generata_file_biais("tests/data.txt", 100, rng);
-    generata_file_biais_refine("tests/data_refine.txt", 100, rng);
+    // generata_file_biais_refine("tests/data_refine.txt", 100, rng);
 
     pnl_rng_free(&rng);
     return 0;
