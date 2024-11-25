@@ -8,7 +8,8 @@
 static void _set_diag_vect(PnlMat *M, const PnlVect *x)
 {
     int i;
-    for (i = 0; i < M->m; i++) {
+    for (i = 0; i < M->m; i++)
+    {
         MLET(M, i, i) = GET(x, i);
     }
 }
@@ -66,14 +67,17 @@ MonteCarlo::MonteCarlo(PnlRng *rng, const IParser &P)
     P.extract("FD step", m_fdStep, true);
     m_nSamplesSAA = m_nSamples;
     P.extract("sample number SAA", m_nSamplesSAA, true);
-    if (m_nSamplesSAA > NUMBER_OF_SAMPLES_SAA_MAX) m_nSamplesSAA = NUMBER_OF_SAMPLES_SAA_MAX;
+    if (m_nSamplesSAA > NUMBER_OF_SAMPLES_SAA_MAX)
+        m_nSamplesSAA = NUMBER_OF_SAMPLES_SAA_MAX;
     m_BT = pnl_vect_new();
 }
 
 MonteCarlo::~MonteCarlo()
 {
-    if (mod != NULL) delete mod;
-    if (opt != NULL) delete opt;
+    if (mod != NULL)
+        delete mod;
+    if (opt != NULL)
+        delete opt;
     pnl_vect_free(&m_BT);
 }
 
@@ -81,7 +85,8 @@ void MonteCarlo::print(bool verbose) const
 {
     std::cout << std::endl;
     std::cout << "*************************************" << std::endl;
-    if (verbose) {
+    if (verbose)
+    {
         mod->print();
         opt->print();
     }
@@ -104,7 +109,8 @@ void MonteCarlo::price(double &prix, double &std_dev)
     double payoffVector;
     prix = 0.0;
     std_dev = 0.0;
-    for (size_t i = 0; i < m_nSamples; i++) {
+    for (size_t i = 0; i < m_nSamples; i++)
+    {
         mod->path(rng);
         payoffVector = opt->payoff(mod->m_pathMatrix);
         prix += payoffVector;
@@ -129,13 +135,15 @@ void MonteCarlo::price_delta(double &prix, double &std_devprix, PnlVect *delta, 
 
     /* resize delta ... */
     prepare_delta(delta, std_devdelta);
-    for (size_t i = 0; i < m_nSamples; i++) {
+    for (size_t i = 0; i < m_nSamples; i++)
+    {
         mod->path(rng);
         payoffVector = opt->payoff(mod->m_pathMatrix);
         prix += payoffVector;
         std_devprix += payoffVector * payoffVector;
 
-        for (int d = 0; d < mod->m_modelSize; d++) {
+        for (int d = 0; d < mod->m_modelSize; d++)
+        {
             double tmp_delta = 0.;
             mod->shiftPath(d, m_fdStep);
             tmp_delta += opt->payoff(mod->m_pathMatrix);
@@ -164,7 +172,8 @@ void MonteCarlo::price(const PnlMat *past, double t, double &prix, double &std_d
     double payoffVector;
     prix = 0.0;
     std_dev = 0.0;
-    for (size_t i = 0; i < m_nSamples; i++) {
+    for (size_t i = 0; i < m_nSamples; i++)
+    {
         mod->path(past, t, rng);
         payoffVector = opt->payoff(mod->m_pathMatrix);
         prix += payoffVector;
@@ -191,13 +200,15 @@ void MonteCarlo::price_delta(const PnlMat *past, double t, double &prix, double 
 
     /* resize delta ... */
     prepare_delta(delta, std_devdelta);
-    for (size_t i = 0; i < m_nSamples; i++) {
+    for (size_t i = 0; i < m_nSamples; i++)
+    {
         mod->path(past, t, rng);
         payoffVector = opt->payoff(mod->m_pathMatrix);
         prix += payoffVector;
         std_devprix += payoffVector * payoffVector;
 
-        for (int d = 0; d < mod->m_modelSize; d++) {
+        for (int d = 0; d < mod->m_modelSize; d++)
+        {
             double tmp_delta = 0.;
             mod->shiftPath(d, m_fdStep, t);
             tmp_delta += opt->payoff(mod->m_pathMatrix);
@@ -230,22 +241,24 @@ double MonteCarlo::hedge(const PnlMat *market, bool verbose)
     pnl_mat_resize(subMarket, 1, mod->m_modelSize);
     int subMarketIndex = 0;
     int H_N = mod->m_nHedgingDates / mod->m_nTimeSteps;
-    for (int i = 0; i < market->m; i++) {
+    for (int i = 0; i < market->m; i++)
+    {
         double tau_i = i * deltaTau;
         PnlVect Stau_i = pnl_vect_wrap_mat_row(market, i);
         // Warning: il faut extraire les bonnes lignes de market!!!
-        if (i % H_N == 1) {
+        if (i % H_N == 1)
+        {
             subMarketIndex++;
             pnl_mat_resize(subMarket, subMarketIndex + 1, mod->m_modelSize);
         }
         pnl_mat_set_row(subMarket, &Stau_i, subMarketIndex);
         price_delta(subMarket, tau_i, price, std_dev_price, dprice, std_dev_dprice);
-        riskFreePortfolio = riskFreePortfolio * std::exp(mod->m_interest * deltaTau)
-                            - pnl_vect_scalar_prod(dprice, &Stau_i) + pnl_vect_scalar_prod(dprice_prev, &Stau_i);
+        riskFreePortfolio = riskFreePortfolio * std::exp(mod->m_interest * deltaTau) - pnl_vect_scalar_prod(dprice, &Stau_i) + pnl_vect_scalar_prod(dprice_prev, &Stau_i);
         if (i == 0)
             riskFreePortfolio += price;
         pnl_vect_clone(dprice_prev, dprice);
-        if (verbose) {
+        if (verbose)
+        {
             std::cout << "Error at time " << tau_i << ": " << riskFreePortfolio - price + pnl_vect_scalar_prod(dprice, &Stau_i) << " (option price " << price << ")" << std::endl;
         }
     }
@@ -297,7 +310,8 @@ void MonteCarlo::expectation_order_n(PnlVect *const *g, const PnlVect *theta, co
     pnl_vect_set_zero(expect_1);
     pnl_mat_set_zero(expect_2);
 
-    for (size_t i = 0; i < m_nSamplesSAA; i++) {
+    for (size_t i = 0; i < m_nSamplesSAA; i++)
+    {
         tmp = SQR(GET(payoffs, i)) * std::exp(-(pnl_vect_scalar_prod(theta, g[i])));
         expect_0 += tmp;
 
@@ -331,13 +345,15 @@ void MonteCarlo::sample_averaging_newton(PnlVect *theta, bool noverbose)
     pnl_vect_resize(theta, m_IsSize);
     pnl_vect_set_zero(theta);
 
-    for (size_t i = 0; i < m_nSamplesSAA; i++) {
+    for (size_t i = 0; i < m_nSamplesSAA; i++)
+    {
         mod->path(rng);
         LET(payoffs, i) = opt->payoff(mod->m_pathMatrix);
         G[i] = getGaussianIsVariable(mod->m_deltaB);
     }
 
-    for (int l = 0; l < k; l++) {
+    for (int l = 0; l < k; l++)
+    {
         expectation_order_n(G, theta, payoffs, expect_0, expect_1, expect_2);
         pnl_vect_clone(gradVector, theta);
         pnl_vect_axpby(1. / (-constant_mode * expect_0), expect_1, 1., gradVector);
@@ -356,12 +372,14 @@ void MonteCarlo::sample_averaging_newton(PnlVect *theta, bool noverbose)
         if (!noverbose)
             std::cout << "iteration " << l << ", norm of the gradient : " << norm_gradv << std::endl;
 
-        if (!noverbose && norm_gradv < EPS) {
+        if (!noverbose && norm_gradv < EPS)
+        {
             std::cout << "iteration : " << l << std::endl;
             break;
         }
     }
-    for (size_t i = 0; i < m_nSamplesSAA; i++) pnl_vect_free(&(G[i]));
+    for (size_t i = 0; i < m_nSamplesSAA; i++)
+        pnl_vect_free(&(G[i]));
     delete[] G;
 
     pnl_vect_free(&payoffs);
@@ -389,7 +407,8 @@ void MonteCarlo::price_SAA(PnlVect *theta, double &price, double &std_dev, bool 
     sample_averaging_newton(theta, noverbose);
 
     /* computation of MC with that value using independent samples */
-    for (size_t i = 0; i < m_nSamples; i++) {
+    for (size_t i = 0; i < m_nSamples; i++)
+    {
         mod->path(rng, theta);
         tmp = opt->payoff(mod->m_pathMatrix) * gaussianWeight(mod->m_deltaB, theta);
         price += tmp;
@@ -422,13 +441,15 @@ void MonteCarlo::price_delta_SAA(PnlVect *theta, double &price, double &std_dev,
     /* resize delta ... */
     prepare_delta(delta, std_devdelta);
 
-    for (size_t i = 0; i < m_nSamples; i++) {
+    for (size_t i = 0; i < m_nSamples; i++)
+    {
         mod->path(rng, theta);
         tmp = opt->payoff(mod->m_pathMatrix) * gaussianWeight(mod->m_deltaB, theta, false);
         price += tmp;
         std_dev += tmp * tmp;
 
-        for (int d = 0; d < mod->m_modelSize; d++) {
+        for (int d = 0; d < mod->m_modelSize; d++)
+        {
             double tmp_delta = 0.;
             double payoff_val = 0.;
             mod->shiftPath(d, m_fdStep);
@@ -465,7 +486,7 @@ void MonteCarlo::gaussianGradWeight(PnlVect *res, const PnlMat *G, const PnlVect
     pnl_mat_sum_vect(m_BT, G, 'r');
     pnl_vect_div_double(m_BT, mod->m_sqrt_nTimeSteps);
     pnl_vect_clone(res, m_BT);
-    pnl_vect_mult_double(res, -1. / sqrt(mod->m_maturity) * exp(-2 * (pnl_vect_scalar_prod(m_BT, x)) * sqrt(mod->m_maturity) - pnl_vect_scalar_prod(x, x) * mod->m_maturity));
+    pnl_vect_mult_double(res, -1. / sqrt(mod->m_maturity) * exp(-2 * (pnl_vect_scalar_prod(m_BT, x))*sqrt(mod->m_maturity) - pnl_vect_scalar_prod(x, x) * mod->m_maturity));
 }
 
 PnlVect *MonteCarlo::getGaussianIsVariable(const PnlMat *G) const

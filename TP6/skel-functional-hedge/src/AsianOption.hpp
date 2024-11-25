@@ -7,19 +7,19 @@
 
 class AsianCallOption : public Option
 {
-  public:
-    AsianCallOption();
-    AsianCallOption(const IParser &P);
-    ~AsianCallOption();
-    void print() const;
+public:
+  AsianCallOption();
+  AsianCallOption(const IParser &P);
+  ~AsianCallOption();
+  void print() const;
 
-    double K;
-    PnlVect *m_lambda;
+  double K;
+  PnlVect *m_lambda;
 
-    double payoff(const PnlMat *path_val);
+  double payoff(const PnlMat *path_val);
 
-  private:
-    PnlVect *ones;
+private:
+  PnlVect *ones;
 };
 
 #endif
